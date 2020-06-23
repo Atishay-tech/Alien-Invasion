@@ -14,7 +14,7 @@ class Settings:
 
 
 settings = Settings(
-    screen_width=1200,
-    screen_height=800,
-    bg_color=(255, 255, 255),
+    screen_width=800,
+    screen_height=600,
+    bg_color=(0, 0, 0),
 )

@@ -26,3 +26,15 @@ class Ship:
     def blitme(self):
         """Transfers ship.image to ship.rect."""
         self.screen.blit(self.image, self.rect)
+
+
+    def move_left(self, distance: int):
+        """Moves the ship in negative x direction by given distance"""
+        if self.rect.left >= 0:
+            self.rect.move_ip(-distance, 0)
+
+
+    def move_right(self, distance: int):
+        """Moves the ship in positive x direction by given distance"""
+        if self.rect.right <= self.screen_rect.width:
+            self.rect.move_ip(distance, 0)
