@@ -9,8 +9,9 @@ class Bullet(Sprite):
         """Initializes a bullet object at ship's current position."""
         super().__init__()
         self.screen = game.screen
+        self.screen_rect = self.screen.get_rect()
         self.settings = game.settings
-        
+
         self.color = game.settings.bullet_color
         self.radius = game.settings.bullet_radius
         self.speed = game.settings.bullet_speed
@@ -34,3 +35,6 @@ class Bullet(Sprite):
         """Updates the bullet's position."""
         self.rect.move_ip(0, -self.speed)
         self.draw_bullet()
+
+        if self.rect.bottom <= 0:
+            self.kill()

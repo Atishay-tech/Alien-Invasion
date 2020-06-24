@@ -1,6 +1,7 @@
 """This module manages the user's ship."""
 from os import name
 import pygame
+from pygame.sprite import Sprite
 
 if name == 'nt':
     SHIP_IMAGE_PATH = 'images\\ship.bmp'
@@ -8,11 +9,12 @@ else:
     SHIP_IMAGE_PATH = 'images/ship.bmp'
 
 
-class Ship:
+class Ship(Sprite):
     """Class that represents the user's ship."""
 
     def __init__(self, game):
         """Initializes the ship."""
+        super().__init__()
         self.screen = game.screen
         self.screen_rect = game.screen.get_rect()
 

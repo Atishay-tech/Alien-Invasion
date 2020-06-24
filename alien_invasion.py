@@ -28,7 +28,7 @@ class AlienInvasion:
         self.ship = Ship(self)
         self.ship.speed = settings.ship_speed
 
-        self.bullet = None
+        self.bullets = pygame.sprite.Group()
 
 
     def _init_window(self):
@@ -38,39 +38,35 @@ class AlienInvasion:
                                               pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_width()
         self.settings.screen_height = self.screen.get_height()
-        """
-        self.screen = pygame.display.set_mode(
-            (self.settings.screen_width, self.settings.screen_height))
-        """
+        #self.screen = pygame.display.set_mode(
+        #    (self.settings.screen_width, self.settings.screen_height))
+
         pygame.display.set_caption("Alien Invasion")
 
 
-    def shoot_bullet(self):
-        """Initializes a new bullet object at top of ship."""
-        self.bullet = Bullet(self)
-
-
-    def handle_events(self):
+    def _handle_events(self):
         """Updates position of sprites according to given pygame keys."""
-        _check_exit_events()
-        
+        events = pygame.event.get()
         pressed_keys = pygame.key.get_pressed()
+
+        _check_exit_events(events)
 
         if pressed_keys[K_LEFT]:
             self.ship.move_left(self.ship.speed)
         if pressed_keys[K_RIGHT]:
             self.ship.move_right(self.ship.speed)
 
-        if pressed_keys[K_SPACE]:
-            self.shoot_bullet()
+        for event in events:
+            if event.type == KEYDOWN and event.key == K_SPACE:
+                new_bullet = Bullet(self)
+                self.bullets.add(new_bullet)
 
 
     def _update_screen(self):
         """Updates screen and all the images on screen."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
-        if self.bullet:
-            self.bullet.update()
+        self.bullets.update()
 
         pygame.display.flip()
 
@@ -80,15 +76,13 @@ class AlienInvasion:
         game_running = True
 
         while game_running:
-
-            self.handle_events()
-
+            self._handle_events()
             self._update_screen()
 
 
-def _check_exit_events() -> None:
+def _check_exit_events(events: list) -> None:
     """Handle events if player wants to quit the game."""
-    for event in pygame.event.get():
+    for event in events:
 
         if (event.type == QUIT
                 or event.type == KEYDOWN and event.key == K_ESCAPE):
