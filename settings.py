@@ -3,7 +3,7 @@
 class Settings:
     """Class used to store settings for Alien Invasion."""
 
-    def __init__(self, new_values: dict):
+    def __init__(self, new_values: dict = {}):
         """Initialize the game's settings"""
         
         # Default values
@@ -28,7 +28,7 @@ set_values = {
     # Ship settings
     'ship_speed': 5,
     # Bullets settings
-    'bullet_speed': 0,
+    'bullet_speed': 10,
     'bullet_radius': 3,
     'bullet_color': (255, 255, 0),
 }
