@@ -13,6 +13,8 @@ from pygame.locals import (
 from settings import settings
 from ship import Ship
 from bullet import Bullet
+from enemy import Enemy
+
 
 
 class AlienInvasion:
@@ -27,21 +29,51 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.ship.speed = settings.ship_speed
-
         self.bullets = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
+        self._create_fleet()
 
 
     def _init_window(self):
-        """Initializes window with settings like screen_width and caption"""
+        """Initializes window with settings like screen_width and caption."""
+        if self.settings.full_screen_mode:  # Full screen mode
+            self.screen = pygame.display.set_mode(
+                (0, 0), pygame.FULLSCREEN)
+        else:                                   # Other modes
+            self.screen = pygame.display.set_mode(
+                (self.settings.screen_width, self.settings.screen_height))
 
-        self.screen = pygame.display.set_mode((0, 0),   # Full Screen mode
-                                              pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_width()
         self.settings.screen_height = self.screen.get_height()
-        #self.screen = pygame.display.set_mode(
-        #    (self.settings.screen_width, self.settings.screen_height))
-
         pygame.display.set_caption("Alien Invasion")
+
+
+    def _create_enemy(self, row_number: int, column_number: int) -> Enemy:
+        """Creates a new enemy"""
+        enemy = Enemy(self)
+        enemy.width = enemy.rect.width
+        enemy.height = enemy.rect.height
+        enemy.rect.x += column_number * (2*enemy.width)
+        enemy.rect.y += row_number * (2*enemy.height)
+        return enemy
+
+
+    def _create_fleet(self):
+        """Initializes the fleet of aliens."""
+        enemy = self._create_enemy(0, 0)
+
+        available_space_x = (self.screen.get_width()
+                             - 10*enemy.width)
+        available_space_y = (self.screen.get_height()
+                             - 3*enemy.height
+                             - self.ship.rect.height)
+        enemies_per_row = available_space_x // (2*enemy.width)
+        num_of_rows = available_space_y // (2*enemy.height)
+
+        for row in range(num_of_rows):
+            for column in range(enemies_per_row):
+                enemy = self._create_enemy(row, column)
+                self.enemies.add(enemy)
 
 
     def _handle_events(self):
@@ -62,11 +94,19 @@ class AlienInvasion:
                 self.bullets.add(new_bullet)
 
 
+        for bullet in self.bullets:
+            for enemy in self.enemies:
+                if pygame.sprite.collide_circle(enemy, bullet):
+                    enemy.kill()
+                    bullet.kill()
+
+
     def _update_screen(self):
         """Updates screen and all the images on screen."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         self.bullets.update()
+        self.enemies.draw(self.screen)
 
         pygame.display.flip()
 
@@ -88,6 +128,7 @@ def _check_exit_events(events: list) -> None:
                 or event.type == KEYDOWN and event.key == K_ESCAPE):
             pygame.quit()
             sys.exit()
+
 
 
 if __name__ == '__main__':
