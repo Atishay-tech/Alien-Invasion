@@ -15,6 +15,8 @@ class Settings:
         self.bullet_speed = 10
         self.bullet_radius = 3
         self.bullet_color = (255, 255, 0)
+        self.fleet_speed_x = 1
+        self.fleet_speed_y = 20
 
         # Sets new values.
         for attr, value in new_values.items():
